@@ -1,8 +1,8 @@
 let symbols = [];
 
-const COUNT = 20;        // 20个符号
+const COUNT = 20;        // 20个
 const START = 1;         // 文件名从 1.png 开始
-const COLS = 5;          // 5列（20个=4行）
+const COLS = 5;          // 5列
 
 let spacing = 140;
 let cellSize = 90;
@@ -30,8 +30,8 @@ let labels = [
   "Mabbondanza"
 ];
 
-const TRANSITION_FRAMES = 18; // 转译时长：18帧≈0.3秒（60fps）
-const EASE_POWER = 3;         // 缓动强度，数值越大越“柔”
+const TRANSITION_FRAMES = 18; // 转译时长：18帧≈0.3秒
+const EASE_POWER = 3;         // 缓动强度，数值越大越柔
 function preload() {
   for (let i = START; i < START + COUNT; i++) {
     const dongbaPath = `assets/dongba/${i}.png`;
@@ -51,14 +51,14 @@ function preload() {
 
     symbols.push({
       id: i,
-      label: labels[i - START] || `#${i}`, // i=1 对应 labels[0]
+      label: labels[i - START] || `#${i}`, 
 
       dongba: dongbaImg,
       pixel: pixelImg,
 
-      state: 0,   // 0=dongba, 1=pixel（最终状态）
-      target: 0,  // 点击后要去的目标状态
-      t: 1,       // 过渡进度 0..1（1=稳定）
+      state: 0,   
+      target: 0,  
+      t: 1,    
       x: 0,
       y: 0
     });
@@ -68,8 +68,8 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   imageMode(CENTER);
-  textFont("Arial"); // 你也可以换成别的
-  noSmooth();        // 像素图更清晰
+  textFont("Arial"); 
+  noSmooth();        
 
   layoutGrid();
 }
@@ -78,7 +78,7 @@ function layoutGrid() {
   const w = width;
   const h = height;
 
-  // 网格占屏幕的比例（可调）
+  
   const maxGridW = w * 0.9;
   const maxGridH = h * 0.72;
 
@@ -107,7 +107,7 @@ function layoutGrid() {
 function draw() {
   background(245);
 
-  // 更新转译动画进度
+  
   for (const s of symbols) {
     if (s.t < 1) {
       s.t = Math.min(1, s.t + 1 / TRANSITION_FRAMES);
@@ -119,7 +119,7 @@ function draw() {
     const dongbaOk = s.dongba && s.dongba.width > 0;
     const pixelOk = s.pixel && s.pixel.width > 0;
 
-    // 若资源缺失，画占位框 + 提示
+    
     if (!dongbaOk || !pixelOk) {
       noFill();
       stroke(210);
@@ -132,12 +132,11 @@ function draw() {
       textSize(12);
       text(`missing ${s.id}`, s.x, s.y);
 
-      // label 仍显示
+      
       drawLabel(s);
       continue;
     }
 
-    // 过渡完成：直接画最终状态
     if (s.t >= 1) {
       const finalImg = s.state === 0 ? s.dongba : s.pixel;
       drawImageContain(finalImg, s.x, s.y, cellSize, cellSize);
@@ -145,7 +144,7 @@ function draw() {
       continue;
     }
 
-    // 过渡中：叠加淡出/淡入
+    
     const p = easeInOutPow(s.t, EASE_POWER);
     const alphaIn = Math.floor(255 * p);
     const alphaOut = 255 - alphaIn;
@@ -177,12 +176,12 @@ function draw() {
 }
 
 function drawLabel(s) {
-  // 注释文字位置：图形底部稍下
+ 
   noStroke();
   fill(0, 140);
   textAlign(CENTER, TOP);
 
-  // 随屏幕微调字号：手机更小
+  
   const fs = Math.max(11, Math.min(14, width / 90));
   textSize(fs);
 
@@ -193,17 +192,17 @@ function mousePressed() {
   for (const s of symbols) {
     const d = dist(mouseX, mouseY, s.x, s.y);
     if (d < cellSize / 2) {
-      // 正在过渡就不响应，避免抖动
+      
       if (s.t < 1) return;
 
-      s.target = 1 - s.state; // 切换目标状态
-      s.t = 0;                // 启动过渡
+      s.target = 1 - s.state; 
+      s.t = 0;                
       break;
     }
   }
 }
 
-// ===== 工具函数：等比 contain，避免拉伸 =====
+
 function drawImageContain(img, cx, cy, boxW, boxH) {
   drawImageContainScaled(img, cx, cy, boxW, boxH, 1.0);
 }
@@ -215,7 +214,7 @@ function drawImageContainScaled(img, cx, cy, boxW, boxH, scaleMul) {
   image(img, cx, cy, iw * scale, ih * scale);
 }
 
-// ===== 缓动：更丝滑 =====
+
 function easeInOutPow(t, p) {
   t = constrain(t, 0, 1);
   if (t < 0.5) return 0.5 * pow(2 * t, p);
